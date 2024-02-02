@@ -40,10 +40,10 @@ Script to generate a Minecraft whitelist.json from usernames
 The usernames should be stored in a text file with a single username per line, example:
 
 ```
-username
-funnyguy
-funnyman
-okman
+test
+testtest
+testtesttest
+testtesttesttest
 ```
 
 ```

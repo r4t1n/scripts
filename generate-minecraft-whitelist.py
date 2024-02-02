@@ -33,9 +33,9 @@ def main():
         print("usage: generate-minecraft-whitelist.py <filename>")
         return
 
+    iterated = 0
     username_filepath = sys.argv[1]
     whitelist_entries = []
-    iterated = 0
 
     try:
         with open(username_filepath, "r") as username_file:
