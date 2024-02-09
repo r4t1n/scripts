@@ -22,27 +22,18 @@ def get_uuid(username):
         data = response.json()
         trimmed_uuid = data["id"] # UUID is under the key "id"
         if trimmed_uuid is None:
-            print(f"Got UUID: None for '{username}', trying again...")
+            print(f"Got UUID 'None' for '{username}', trying again...")
             return get_uuid(username)
         uuid = "-".join([trimmed_uuid[:8], trimmed_uuid[8:12], trimmed_uuid[12:16], trimmed_uuid[16:20], trimmed_uuid[20:]]) # The Minecraft API gives back the UUID without dashes
-        return uuid
-    elif response.status_code == 404:
-        print(f"Got status code '404' when trying to get the UUID for '{username}' (the user does not exist), skipping user")
-        return None
-    elif response.status_code == 429:
-        print(f"Got status code '429' when trying to get the UUID for '{username}' (we have been rate limited), trying again...")
-        time.sleep(1)
-        return get_uuid(username)
+        return uuid, None
     else:
-        print(f"error: unable to get the UUID for '{username}', HTTP status code: '{response.status_code}'")
-        return None
+        return None, response.status_code
 
 def main():
     if len(sys.argv) != 2:
         print("usage: generate-minecraft-whitelist.py <filename>")
         return
 
-    from_whitelist = False
     iterated = 0
     username_filepath = sys.argv[1]
     whitelist_entries = []
@@ -56,18 +47,23 @@ def main():
         usernames_set = set(usernames)
 
         for username in sorted(usernames_set, key=str.lower):
-            uuid = username_uuid_map.get(username)
-            if uuid:
-                from_whitelist = True
-            else:
-                from_whitelist = False
-                uuid = get_uuid(username)
             iterated += 1
+            uuid = username_uuid_map.get(username)
+            uuid_from = "whitelist"
+            if not uuid:
+                uuid, status_code = get_uuid(username)
+                if status_code:
+                     if status_code == 404:
+                         print(f"[{iterated}/{len(usernames_set)}] (from API) Username: '{username}' does not exist, HTTP status code: 404")
+                     elif status_code == 429:
+                         print(f"[{iterated}/{len(usernames_set)}] (from API) Rate limited for '{username}', trying again..., HTTP status code: 429")
+                         time.sleep(1)
+                         uuid, _ = get_uuid(username)
+                     else:
+                         print(f"[{iterated}/{len(usernames_set)}] (from API) Failed to get UUID for '{username}', HTTP status code: {status_code}")
+                uuid_from = "API"
             if uuid:
-                if from_whitelist:
-                    print(f"[{iterated}/{len(usernames_set)}] (from whitelist) Username: {username}, UUID: {uuid}")
-                else:
-                    print(f"[{iterated}/{len(usernames_set)}] Username: {username}, UUID: {uuid}")
+                print(f"[{iterated}/{len(usernames_set)}] (from {uuid_from}) Username: {username}, UUID: {uuid}")
                 whitelist_entry = { # https://minecraft.fandom.com/wiki/Whitelist.json
                     "uuid": uuid,
                     "name": username
