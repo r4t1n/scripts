@@ -5,6 +5,15 @@ import requests
 import sys
 import time
 
+def read_whitelist():
+    try:
+        with open("whitelist.json", "r") as whitelist_file:
+            whitelist = json.load(whitelist_file)
+            username_uuid_map = {entry["name"]: entry["uuid"] for entry in whitelist}
+            return username_uuid_map
+    except FileNotFoundError:
+        return
+
 def get_uuid(username):
     url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
     response = requests.get(url)
@@ -42,12 +51,15 @@ def main():
             print("Getting UUIDs for usernames in file:")
             usernames = [line.strip() for line in username_file]
 
+        username_uuid_map = read_whitelist()
         usernames_set = set(usernames)
 
         for username in sorted(usernames_set, key=str.lower):
-            uuid = get_uuid(username)
+            uuid = username_uuid_map.get(username)
+            if not uuid:
+                uuid = get_uuid(username)
             iterated += 1
-            if uuid:    
+            if uuid:
                 print(f"[{iterated}/{len(usernames_set)}] Username: {username}, UUID: {uuid}")
                 whitelist_entry = { # https://minecraft.fandom.com/wiki/Whitelist.json
                     "uuid": uuid,
