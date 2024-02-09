@@ -12,7 +12,7 @@ def read_whitelist():
             username_uuid_map = {entry["name"]: entry["uuid"] for entry in whitelist}
             return username_uuid_map
     except FileNotFoundError:
-        return
+        return {}
 
 def get_uuid(username):
     url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
@@ -42,6 +42,7 @@ def main():
         print("usage: generate-minecraft-whitelist.py <filename>")
         return
 
+    from_whitelist = False
     iterated = 0
     username_filepath = sys.argv[1]
     whitelist_entries = []
@@ -56,11 +57,17 @@ def main():
 
         for username in sorted(usernames_set, key=str.lower):
             uuid = username_uuid_map.get(username)
-            if not uuid:
+            if uuid:
+                from_whitelist = True
+            else:
+                from_whitelist = False
                 uuid = get_uuid(username)
             iterated += 1
             if uuid:
-                print(f"[{iterated}/{len(usernames_set)}] Username: {username}, UUID: {uuid}")
+                if from_whitelist:
+                    print(f"[{iterated}/{len(usernames_set)}] (from whitelist) Username: {username}, UUID: {uuid}")
+                else:
+                    print(f"[{iterated}/{len(usernames_set)}] Username: {username}, UUID: {uuid}")
                 whitelist_entry = { # https://minecraft.fandom.com/wiki/Whitelist.json
                     "uuid": uuid,
                     "name": username
