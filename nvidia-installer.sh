@@ -3,7 +3,7 @@
 default_cdn="us"
 
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 [--cdn <CDN>] <NVIDIA Driver Version>"
+    echo "Usage: $0 [--cdn <CDN>] <NVIDIA Driver Version> [installer arguments]"
     exit 1
 fi
 
@@ -19,6 +19,7 @@ while [[ $# -gt 0 ]]; do
         *)
             version="$1"
             shift
+            break
             ;;
     esac
 done
@@ -31,4 +32,4 @@ url="https://${cdn}.download.nvidia.com/XFree86/Linux-x86_64/${version}/NVIDIA-L
 wget "$url"
 
 chmod +x NVIDIA-Linux-x86_64-${version}.run
-./NVIDIA-Linux-x86_64-${version}.run
+./NVIDIA-Linux-x86_64-${version}.run "$@"
