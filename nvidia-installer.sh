@@ -7,6 +7,16 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+downloader=
+if command -v curl &> /dev/null; then
+    downloader="curl -O"
+elif command -v wget &> /dev/null; then
+    downloader="wget"
+else
+    echo "Error: Neither curl nor wget is available, install either curl or wget"
+    exit 1
+fi
+
 while [[ $# -gt 0 ]]; do
     key="$1"
 
@@ -29,7 +39,7 @@ if [ -z "$cdn" ]; then
 fi
 
 url="https://${cdn}.download.nvidia.com/XFree86/Linux-x86_64/${version}/NVIDIA-Linux-x86_64-${version}.run"
-wget "$url"
+$downloader "$url"
 
 chmod +x NVIDIA-Linux-x86_64-${version}.run
 ./NVIDIA-Linux-x86_64-${version}.run "$@"
