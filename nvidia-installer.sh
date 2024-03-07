@@ -1,9 +1,9 @@
 #!/bin/bash
 
-default_cdn="us"
+default_cdn="international"
 
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 [--cdn <CDN>] <NVIDIA Driver Version> [installer arguments]"
+    echo "Usage: $0 [--cdn <CDN>] <NVIDIA driver version> [NVIDIA installer arguments]"
     exit 1
 fi
 
