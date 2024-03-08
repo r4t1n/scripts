@@ -1,3 +1,3 @@
 #!/bin/bash
 
-solaar --window=hide
+sleep 1 && /usr/bin/discord
