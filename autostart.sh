@@ -1,3 +1,9 @@
 #!/bin/bash
 
-sleep 1 && /usr/bin/discord
+# rattop
+#powerprofilesctl set power-saver
+#sleep 2 && discord
+
+# shark
+#solaar --window hide
+#openrgb --profile ~/.config/OpenRGB/default.orp
