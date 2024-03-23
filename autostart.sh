@@ -6,4 +6,4 @@
 
 # shark
 #solaar --window hide
-#openrgb --profile ~/.config/OpenRGB/default.orp
+#openrgb --profile /home/ratin/.config/OpenRGB/default.orp
