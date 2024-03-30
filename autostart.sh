@@ -2,8 +2,8 @@
 
 # rattop
 #powerprofilesctl set power-saver
-#sleep 4 && discord
+#sleep 2; discord
 
 # shark
 #solaar --window hide
-#openrgb --profile /home/ratin/.config/OpenRGB/default.orp
+#openrgb --profile ~/.config/OpenRGB/default.orp
